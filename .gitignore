@@ -1,0 +1,29 @@
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files and caches
+.cache/
+__pycache__/
+*.py[cod]
+
+
+# Temporary verification scripts and benchmarks
+scratch/
