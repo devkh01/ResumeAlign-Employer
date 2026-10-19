@@ -28,8 +28,6 @@ The application supports PDF and DOCX resume uploads and presents multiple scori
 | Semantic model | `Xenova/all-MiniLM-L6-v2` |
 | Development and testing | npm, browser, API testing tools |
 
-*Verify package names and versions against the final project files before submission.*
-
 ## How It Works
 
 1. The employer creates a job listing and enters the job requirements.
@@ -76,15 +74,41 @@ Candidates are primarily ranked by Job Match Score. ATS Compatibility is used as
 
 ```text
 ResumeAlign-Employer/
-├── client/                 # React + Vite frontend
-├── server/                 # Express backend and services
-├── .gitignore
-├── README.md
-└── package files           # Verify actual locations before publishing
+├── client/                                 # Frontend application (React + Vite)
+│   ├── public/                             # Static public assets
+│   ├── src/
+│   │   ├── assets/                         # Frontend asset files
+│   │   ├── components/                     # UI components
+│   │   │   ├── CandidateShortlist.jsx      # Ranked candidate cards & score breakdowns
+│   │   │   ├── CreateJobForm.jsx           # Modal form to create job listings
+│   │   │   ├── Dashboard.jsx               # Dashboard header & metrics overview
+│   │   │   ├── JobCard.jsx                 # Job listing card component
+│   │   │   ├── ResumeUpload.jsx            # Resume upload modal & processing results
+│   │   │   ├── Sidebar.jsx                 # App sidebar navigation
+│   │   │   └── SummaryCard.jsx             # Metric summary card
+│   │   ├── App.jsx                         # Main application state & API handling
+│   │   ├── main.jsx                        # React root entry point
+│   │   └── style.css                       # Design system & component styling
+│   ├── index.html                          # HTML template
+│   ├── package.json                        # Frontend dependencies & scripts
+│   ├── package-lock.json                   # Frontend lockfile
+│   └── vite.config.js                      # Vite build configuration
+├── server/                                 # Backend application (Node.js + Express)
+│   ├── middleware/
+│   │   └── upload.js                       # Multer configuration for PDF/DOCX uploads
+│   ├── services/
+│   │   ├── atsScanner.js                   # Heuristic ATS compatibility evaluator
+│   │   ├── candidateExtractor.js           # Candidate contact & skill extraction
+│   │   ├── extractor.js                    # Text extraction via pdf-parse & mammoth
+│   │   ├── jobMatcher.js                   # Rule-based Job Match Score calculator
+│   │   └── semanticMatcher.js              # Local transformer semantic matching
+│   ├── .env.example                        # Environment variables template
+│   ├── index.js                            # Express server, routes & in-memory store
+│   ├── package.json                        # Backend dependencies & scripts
+│   └── package-lock.json                   # Backend lockfile
+├── .gitignore                              # Git ignore rules
+└── README.md                               # Project documentation
 ```
-
-The structure above is a simplified overview. The exact package files and service files should be confirmed against the repository.
-
 
 ## Getting Started
 
@@ -97,11 +121,9 @@ The structure above is a simplified overview. The exact package files and servic
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/ResumeAlign-Employer.git
+git clone https://github.com/devkh01/ResumeAlign-Employer.git
 cd ResumeAlign-Employer
 ```
-
-Replace `YOUR-USERNAME` with the GitHub username that owns the repository.
 
 ### 2. Install Backend Dependencies
 
@@ -153,7 +175,6 @@ npm run build
 ```
 
 The backend currently has no configured automated test suite. Its `npm test` command is a placeholder.
-
 
 ## API Overview
 
