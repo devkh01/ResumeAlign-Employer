@@ -97,7 +97,7 @@ The structure above is a simplified overview. The exact package files and servic
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/devkh01/ResumeAlign-Employer.git
+git clone https://github.com/YOUR-USERNAME/ResumeAlign-Employer.git
 cd ResumeAlign-Employer
 ```
 
