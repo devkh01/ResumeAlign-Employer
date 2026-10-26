@@ -15,9 +15,11 @@
  *     and safe human-readable note. The full extracted text is retained only for
  *     server-side in-memory candidate analysis and must not be exposed via public APIs.
  */
+const crypto = require('crypto');
+
 
 const path = require('path');
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 const mammoth = require('mammoth');
 
 const EXTRACTION_TIMEOUT_MS = 10000; // 10 seconds per file
@@ -70,10 +72,18 @@ function withTimeout(promise, ms, filename) {
  * Extracts raw text from a PDF in-memory buffer.
  */
 async function parsePdf(buffer) {
-  const data = await pdfParse(buffer);
-  return (data && typeof data.text === 'string') ? data.text : '';
-}
+  const parser = new PDFParse({ data: buffer });
 
+  try {
+    const result = await parser.getText();
+
+    return (result && typeof result.text === 'string')
+      ? result.text
+      : '';
+  } finally {
+    await parser.destroy();
+  }
+}
 /**
  * Extracts raw text from a DOCX in-memory buffer using mammoth.
  */
@@ -149,6 +159,8 @@ async function extractTextFromFile(file) {
       note: 'Text extracted successfully.',
     };
   } catch (err) {
+    console.error('[EXTRACTION DEBUG]', filename, err);
+
     const errMessage = (err && err.message) ? String(err.message).toLowerCase() : '';
     const errName = (err && err.name) ? String(err.name) : '';
 
