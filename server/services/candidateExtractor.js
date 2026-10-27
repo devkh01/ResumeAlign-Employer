@@ -191,18 +191,38 @@ function extractName(text) {
  * Extracts recognized skills using punctuation-safe regex matchers.
  * Returns an array of canonical skill names (e.g. ['React', 'Node.js', 'C++']).
  */
+
 function extractSkills(text) {
   if (!text || typeof text !== 'string') return [];
 
   const detected = [];
+
+  // Split text into sentences or bullet-like lines so a negative statement
+  // does not automatically cancel a positive mention elsewhere.
+  const statements = text
+    .split(/[\n\r•;]+|(?<=[.!?])\s+/)
+    .map((statement) => statement.trim())
+    .filter(Boolean);
+
   for (const skill of SKILL_DEFINITIONS) {
-    if (skill.pattern.test(text)) {
+    const positiveMention = statements.some((statement) => {
+      if (!skill.pattern.test(statement)) return false;
+
+      // Conservative handling of explicit negative/limiting statements.
+      const negativeContext =
+        /\b(?:no|not|never|without|lack(?:s|ing)?|limited evidence of|little experience with|no experience with|beginner-level)\b/i;
+
+      return !negativeContext.test(statement);
+    });
+
+    if (positiveMention) {
       detected.push(skill.name);
     }
   }
 
   return detected;
 }
+
 
 /**
  * Extracts explicit, reliable experience statements (e.g. "5+ years", "3 years").

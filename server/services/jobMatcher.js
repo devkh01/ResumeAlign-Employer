@@ -59,15 +59,16 @@ const TITLE_STOP_WORDS = new Set([
  * Checks if a specific skill is present in the candidate profile or raw resume text.
  * Punctuation-safe: handles C++, C#, .NET, Node.js without word boundary failures.
  */
+
 function isSkillPresent(skillName, candidateSkillsSet, rawText) {
   const norm = normalizeSkill(skillName);
 
-  // 1. Check in extracted canonical candidate skills
+  // 1. Check the canonical skills extracted from the resume.
   if (candidateSkillsSet.has(norm.toLowerCase())) {
     return true;
   }
 
-  // 2. Direct check in raw text with punctuation-safe boundary guards
+  // 2. Raw-text fallback for skills not already detected.
   if (!rawText || typeof rawText !== 'string') return false;
 
   let pattern;
@@ -84,13 +85,25 @@ function isSkillPresent(skillName, candidateSkillsSet, rawText) {
   } else if (norm === 'CI/CD') {
     pattern = /(?:^|[^a-zA-Z0-9])CI\/CD(?=[^a-zA-Z0-9]|$)/i;
   } else {
-    // Alphanumeric standard skills
     const escaped = norm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     pattern = new RegExp(`\\b${escaped}\\b`, 'i');
   }
 
-  return pattern.test(rawText);
+  // Find mentions of the skill, but don't count a mention in a statement
+  // that explicitly denies or limits the candidate's experience.
+  const statements = rawText
+    .split(/[\n\r•;]+|(?<=[.!?])\s+/)
+    .map((statement) => statement.trim())
+    .filter(Boolean);
+
+  const negativeContext =
+    /\b(?:no|not|never|without|lack(?:s|ing)?|limited evidence of|little experience with|no experience with|beginner-level)\b/i;
+
+  return statements.some((statement) =>
+    pattern.test(statement) && !negativeContext.test(statement)
+  );
 }
+
 
 /**
  * Calculates the Job Match Score and returns a transparent breakdown.

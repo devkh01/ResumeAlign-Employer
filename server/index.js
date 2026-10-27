@@ -212,7 +212,7 @@ app.post('/api/jobs/:jobId/resumes', (req, res) => {
 
         // Immediate cleanup: discard file buffer so memory is promptly freed
         file.buffer = null;
-
+       
         // Extract structured candidate details from the already-extracted text
         const candidate = (extraction.status === 'success' && extraction.extractedText)
           ? extractCandidateInfo(extraction.extractedText)
